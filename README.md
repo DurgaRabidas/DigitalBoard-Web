@@ -57,6 +57,13 @@ http://localhost:8000
 7. Drag objects with **Select/Pan** enabled to move or resize them.
 8. Drag thumbnails to reorder pages.
 9. Click **Save / Export PDF** to download the completed document.
+2. Use **Previous Page** / **Next Page** or thumbnails to navigate.
+3. Select drawing tools, colors, and brush sizes to annotate.
+4. Use **Add Blank Page** or thumbnail **+ after** buttons to insert explanation pages.
+5. Use the shapes, text, equation, image, and math tool buttons to add teaching content.
+6. Drag objects with **Select/Pan** enabled to move or resize them.
+7. Drag thumbnails to reorder pages.
+8. Click **Save / Export PDF** to download the completed document.
 
 ## Deploy to GitHub Pages
 
