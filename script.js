@@ -8,11 +8,13 @@ const fabricCanvas = new fabric.Canvas('fabricCanvas', { preserveObjectStacking:
 const state = { pages: [], current: -1, pdf: null, tool: 'select', color: '#0f172a', brush: 5, zoom: 1, busy: false, equationMode: false, history: {}, redo: {}, suppress: false };
 const DEFAULT = { width: 1240, height: 1754, blank: true };
 
+const controls = ['menuFab','controlDrawer','pdfInput','addBlankBtn','duplicatePageBtn','deletePageBtn','exportBtn','prevBtn','nextBtn','zoomOutBtn','zoomInBtn','fitBtn','resetZoomBtn','undoBtn','redoBtn','clearBtn','shapeSelect','textBtn','equationBtn','imageBtn','imageInput','colorPicker','brushSize','brushSizeOut','pageStatus','zoomStatus','thumbList','stage'];
 const controls = ['pdfInput','addBlankBtn','duplicatePageBtn','deletePageBtn','exportBtn','prevBtn','nextBtn','zoomOutBtn','zoomInBtn','fitBtn','resetZoomBtn','undoBtn','redoBtn','clearBtn','shapeSelect','textBtn','equationBtn','imageBtn','imageInput','colorPicker','brushSize','brushSizeOut','pageStatus','zoomStatus','thumbList','stage'];
 const el = Object.fromEntries(controls.map(id => [id, $(id)]));
 
 function makePage(meta){ return { id: crypto.randomUUID(), width: meta.width, height: meta.height, pdfPage: meta.pdfPage || null, blank: !!meta.blank, bg: meta.bg || null, json: null }; }
 function page(){ return state.pages[state.current]; }
+function setStatus(){ el.menuFab.setAttribute('aria-expanded', document.body.classList.contains('menu-open')); el.pageStatus.textContent = state.pages.length ? `Page ${state.current + 1} / ${state.pages.length}` : 'Page 0 / 0'; el.zoomStatus.textContent = `${Math.round(state.zoom*100)}%`; }
 function setStatus(){ el.pageStatus.textContent = state.pages.length ? `Page ${state.current + 1} / ${state.pages.length}` : 'Page 0 / 0'; el.zoomStatus.textContent = `${Math.round(state.zoom*100)}%`; }
 function savePage(){ if (state.current < 0 || state.suppress) return; page().json = JSON.stringify(fabricCanvas.toDatalessJSON(['kind','latex'])); }
 function snapshot(){ if (state.current < 0 || state.suppress) return; savePage(); const id = page().id; state.history[id] ||= []; state.redo[id] = []; state.history[id].push(page().json); if (state.history[id].length > 80) state.history[id].shift(); renderThumb(state.current); }
@@ -81,4 +83,10 @@ function buildThumbs(){ el.thumbList.innerHTML=''; state.pages.forEach((p,i)=>{ 
 el.exportBtn.onclick = async () => { if(!state.pages.length) return alert('Import a PDF or add a blank page first.'); savePage(); const { jsPDF } = jspdf; const doc = new jsPDF({unit:'pt',format:[page().width,page().height]}); for(let i=0;i<state.pages.length;i++){ const p=state.pages[i]; if(i) doc.addPage([p.width,p.height], p.width>p.height?'landscape':'portrait'); await showPage(i); const img=el.stageToImage ? null : composePage(); doc.addImage(img,'PNG',0,0,p.width,p.height); } doc.save('teaching-board-export.pdf'); };
 function composePage(){ const out=document.createElement('canvas'); out.width=page().width; out.height=page().height; const c=out.getContext('2d'); c.drawImage(pdfCanvas,0,0); c.drawImage(fabricCanvas.lowerCanvasEl,0,0); return out.toDataURL('image/png'); }
 function hexToRgba(hex,a){ const n=parseInt(hex.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; }
+
+let fabDrag = { active:false, moved:false, dx:0, dy:0 };
+el.menuFab.addEventListener('pointerdown', e => { fabDrag = { active:true, moved:false, dx:e.clientX-el.menuFab.offsetLeft, dy:e.clientY-el.menuFab.offsetTop }; el.menuFab.setPointerCapture(e.pointerId); });
+el.menuFab.addEventListener('pointermove', e => { if(!fabDrag.active) return; fabDrag.moved = true; const x=Math.max(8, Math.min(innerWidth-66, e.clientX-fabDrag.dx)); const y=Math.max(8, Math.min(innerHeight-66, e.clientY-fabDrag.dy)); el.menuFab.style.left=`${x}px`; el.menuFab.style.top=`${y}px`; });
+el.menuFab.addEventListener('pointerup', () => { if(!fabDrag.moved) document.body.classList.toggle('menu-open'); fabDrag.active=false; setStatus(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') { document.body.classList.remove('menu-open'); setStatus(); } });
 window.addEventListener('resize',()=>fitToScreen(false)); setTool('select'); addBlank(-1);

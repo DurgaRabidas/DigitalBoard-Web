@@ -6,6 +6,7 @@ A browser-based classroom smart board for importing PDFs, annotating lessons, ad
 
 - Import PDF files locally in the browser with PDF.js.
 - Render PDF pages to a canvas at high resolution.
+- A clean board-first interface with one movable three-line menu button that opens or hides every tool panel.
 - Page navigation with current page / total page count.
 - Add blank whiteboard pages between existing PDF pages.
 - Thumbnail page manager with select, duplicate, delete, insert-after, and drag-and-drop reorder.
@@ -48,6 +49,14 @@ http://localhost:8000
 ## Use the App
 
 1. Click **Import PDF** and choose a PDF from your device.
+2. Drag the floating **☰** button anywhere convenient; tap it to show or hide all tools.
+3. Use **Previous Page** / **Next Page** or thumbnails to navigate.
+4. Select drawing tools, colors, and brush sizes to annotate.
+5. Use **Add Blank Page** or thumbnail **+ after** buttons to insert explanation pages.
+6. Use the shapes, text, equation, image, and math tool buttons to add teaching content.
+7. Drag objects with **Select/Pan** enabled to move or resize them.
+8. Drag thumbnails to reorder pages.
+9. Click **Save / Export PDF** to download the completed document.
 2. Use **Previous Page** / **Next Page** or thumbnails to navigate.
 3. Select drawing tools, colors, and brush sizes to annotate.
 4. Use **Add Blank Page** or thumbnail **+ after** buttons to insert explanation pages.

@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
 </head>
 <body>
+  <button id="menuFab" class="menu-fab" aria-label="Open tools" aria-expanded="false">☰</button>
+  <div id="controlDrawer" class="control-drawer" aria-label="Teaching board controls">
   <header class="topbar">
     <div class="brand"><span class="brand-mark">▣</span><div><h1>Digital Teaching Board</h1><p>PDF annotation, math teaching, whiteboard pages</p></div></div>
     <div class="top-actions">
@@ -25,6 +27,7 @@
       <div id="thumbList" class="thumb-list"></div>
     </aside>
 
+    <main class="board-shell controls-column">
     <main class="board-shell">
       <nav class="tool-ribbon" aria-label="Teaching board tools">
         <div class="group">
@@ -56,6 +59,17 @@
         <button id="prevBtn">Previous Page</button><span id="pageStatus">Page 0 / 0</span><button id="nextBtn">Next Page</button>
         <span class="spacer"></span><button id="zoomOutBtn">−</button><button id="fitBtn">Fit</button><button id="resetZoomBtn">100%</button><button id="zoomInBtn">+</button><span id="zoomStatus">100%</span>
       </div>
+
+    </main>
+  </section>
+  </div>
+
+  <main class="board-only">
+    <div id="stage" class="stage">
+      <canvas id="pdfCanvas"></canvas>
+      <canvas id="fabricCanvas"></canvas>
+    </div>
+  </main>
 
       <div id="stage" class="stage">
         <canvas id="pdfCanvas"></canvas>
