@@ -1,65 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixelPro AI v2</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Digital Teaching Board</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
 </head>
 <body>
-
-<header class="topbar">
-    <div class="logo">
-        <h2>🎨 PixelPro AI</h2>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">▣</span><div><h1>Digital Teaching Board</h1><p>PDF annotation, math teaching, whiteboard pages</p></div></div>
+    <div class="top-actions">
+      <label class="primary file-action">Import PDF<input id="pdfInput" type="file" accept="application/pdf" /></label>
+      <button id="addBlankBtn">Add Blank Page</button>
+      <button id="duplicatePageBtn">Duplicate</button>
+      <button id="deletePageBtn" class="danger">Delete</button>
+      <button id="exportBtn" class="success">Save / Export PDF</button>
     </div>
+  </header>
 
-    <div class="top-buttons">
-        <input type="file" id="upload" accept="image/*">
-        <button id="downloadBtn">Download</button>
-    </div>
-</header>
-
-<div class="container">
-
-    <aside class="left-panel">
-
-        <h3>Tools</h3>
-
-        <button id="cropBtn">✂ Crop</button>
-        <button id="rotateBtn">🔄 Rotate</button>
-        <button id="flipBtn">↔ Flip</button>
-        <button id="zoomInBtn">➕ Zoom In</button>
-        <button id="zoomOutBtn">➖ Zoom Out</button>
-
+  <section class="workspace">
+    <aside class="sidebar" aria-label="Page manager">
+      <div class="panel-title"><strong>Pages</strong><button id="toggleThumbs" title="Toggle thumbnails">☰</button></div>
+      <div id="thumbList" class="thumb-list"></div>
     </aside>
 
-    <main class="editor">
+    <main class="board-shell">
+      <nav class="tool-ribbon" aria-label="Teaching board tools">
+        <div class="group">
+          <button data-tool="select" class="tool active">Select/Pan</button>
+          <button data-tool="pen" class="tool">Pen</button>
+          <button data-tool="pencil" class="tool">Pencil</button>
+          <button data-tool="highlighter" class="tool">Highlighter</button>
+          <button data-tool="eraser" class="tool">Eraser</button>
+        </div>
+        <div class="group compact">
+          <label>Color <input id="colorPicker" type="color" value="#0f172a" /></label>
+          <label>Size <input id="brushSize" type="range" min="1" max="60" value="5" /></label><output id="brushSizeOut">5</output>
+        </div>
+        <div class="group">
+          <select id="shapeSelect" title="Shapes">
+            <option value="">Shapes</option><option value="line">Line</option><option value="arrow">Arrow</option><option value="rect">Rectangle</option><option value="roundRect">Rounded rectangle</option><option value="circle">Circle</option><option value="ellipse">Ellipse</option><option value="triangle">Triangle</option><option value="rightTriangle">Right triangle</option><option value="polygon">Polygon</option><option value="star">Star</option><option value="arc">Arc</option><option value="axes">Coordinate axes/grid</option>
+          </select>
+          <button id="textBtn">Text</button><button id="equationBtn">Equation</button><button id="imageBtn">Image</button><input id="imageInput" type="file" accept="image/*" hidden />
+        </div>
+        <div class="group">
+          <button id="rulerBtn">Ruler</button><button id="protractorBtn">Protractor</button><button id="compassBtn">Compass</button><button id="gridBtn">Grid Paper</button><button id="symbolsBtn">Math Symbols</button>
+        </div>
+        <div class="group">
+          <button id="undoBtn">Undo</button><button id="redoBtn">Redo</button><button id="clearBtn">Clear Annotations</button>
+        </div>
+      </nav>
 
-        <canvas id="canvas"></canvas>
+      <div class="navigation-bar">
+        <button id="prevBtn">Previous Page</button><span id="pageStatus">Page 0 / 0</span><button id="nextBtn">Next Page</button>
+        <span class="spacer"></span><button id="zoomOutBtn">−</button><button id="fitBtn">Fit</button><button id="resetZoomBtn">100%</button><button id="zoomInBtn">+</button><span id="zoomStatus">100%</span>
+      </div>
 
+      <div id="stage" class="stage">
+        <canvas id="pdfCanvas"></canvas>
+        <canvas id="fabricCanvas"></canvas>
+      </div>
     </main>
+  </section>
 
-    <aside class="right-panel">
+  <dialog id="textDialog"><form method="dialog" class="dialog-card"><h2 id="dialogTitle">Add Text</h2><textarea id="textValue" rows="5" placeholder="Type text, math, or symbols"></textarea><div class="dialog-grid"><label>Font size<input id="fontSize" type="number" value="32" min="8" max="160" /></label><label>Color<input id="textColor" type="color" value="#111827" /></label><label><input id="boldText" type="checkbox" /> Bold</label><label><input id="italicText" type="checkbox" /> Italic</label></div><p class="hint">Equation mode supports LaTeX via KaTeX, including fractions, superscripts and subscripts.</p><menu><button value="cancel">Cancel</button><button id="insertTextBtn" value="default" class="primary">Insert</button></menu></form></dialog>
 
-        <h3>Adjustments</h3>
-
-        <label>Brightness</label>
-        <input type="range" id="brightness" min="0" max="200" value="100">
-
-        <br><br>
-
-        <label>Contrast</label>
-        <input type="range" id="contrast" min="0" max="200" value="100">
-
-        <br><br>
-
-        <button id="filterBtn">🎨 Toggle Grayscale</button>
-
-    </aside>
-
-</div>
-
-<script src="script.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
