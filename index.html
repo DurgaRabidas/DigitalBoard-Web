@@ -28,7 +28,6 @@
     </aside>
 
     <main class="board-shell controls-column">
-    <main class="board-shell">
       <nav class="tool-ribbon" aria-label="Teaching board tools">
         <div class="group">
           <button data-tool="select" class="tool active">Select/Pan</button>
@@ -64,19 +63,12 @@
   </section>
   </div>
 
-  <main class="board-only">
-    <div id="stage" class="stage">
-      <canvas id="pdfCanvas"></canvas>
-      <canvas id="fabricCanvas"></canvas>
-    </div>
-  </main>
-
+  <main class="board-only" aria-label="Teaching board">
       <div id="stage" class="stage">
         <canvas id="pdfCanvas"></canvas>
         <canvas id="fabricCanvas"></canvas>
       </div>
-    </main>
-  </section>
+  </main>
 
   <dialog id="textDialog"><form method="dialog" class="dialog-card"><h2 id="dialogTitle">Add Text</h2><textarea id="textValue" rows="5" placeholder="Type text, math, or symbols"></textarea><div class="dialog-grid"><label>Font size<input id="fontSize" type="number" value="32" min="8" max="160" /></label><label>Color<input id="textColor" type="color" value="#111827" /></label><label><input id="boldText" type="checkbox" /> Bold</label><label><input id="italicText" type="checkbox" /> Italic</label></div><p class="hint">Equation mode supports LaTeX via KaTeX, including fractions, superscripts and subscripts.</p><menu><button value="cancel">Cancel</button><button id="insertTextBtn" value="default" class="primary">Insert</button></menu></form></dialog>
 
