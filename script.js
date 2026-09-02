@@ -8,14 +8,12 @@ const fabricCanvas = new fabric.Canvas('fabricCanvas', { preserveObjectStacking:
 const state = { pages: [], current: -1, pdf: null, tool: 'select', color: '#0f172a', brush: 5, zoom: 1, busy: false, equationMode: false, history: {}, redo: {}, suppress: false };
 const DEFAULT = { width: 1240, height: 1754, blank: true };
 
-const controls = ['menuFab','controlDrawer','pdfInput','addBlankBtn','duplicatePageBtn','deletePageBtn','exportBtn','prevBtn','nextBtn','zoomOutBtn','zoomInBtn','fitBtn','resetZoomBtn','undoBtn','redoBtn','clearBtn','shapeSelect','textBtn','equationBtn','imageBtn','imageInput','colorPicker','brushSize','brushSizeOut','pageStatus','zoomStatus','thumbList','stage'];
-const controls = ['pdfInput','addBlankBtn','duplicatePageBtn','deletePageBtn','exportBtn','prevBtn','nextBtn','zoomOutBtn','zoomInBtn','fitBtn','resetZoomBtn','undoBtn','redoBtn','clearBtn','shapeSelect','textBtn','equationBtn','imageBtn','imageInput','colorPicker','brushSize','brushSizeOut','pageStatus','zoomStatus','thumbList','stage'];
+const controls = ['menuFab','controlDrawer','pdfInput','addBlankBtn','duplicatePageBtn','deletePageBtn','exportBtn','prevBtn','nextBtn','zoomOutBtn','zoomInBtn','fitBtn','resetZoomBtn','undoBtn','redoBtn','clearBtn','shapeSelect','textBtn','equationBtn','imageBtn','imageInput','rulerBtn','protractorBtn','compassBtn','gridBtn','symbolsBtn','colorPicker','brushSize','brushSizeOut','pageStatus','zoomStatus','thumbList','stage'];
 const el = Object.fromEntries(controls.map(id => [id, $(id)]));
 
 function makePage(meta){ return { id: crypto.randomUUID(), width: meta.width, height: meta.height, pdfPage: meta.pdfPage || null, blank: !!meta.blank, bg: meta.bg || null, json: null }; }
 function page(){ return state.pages[state.current]; }
 function setStatus(){ el.menuFab.setAttribute('aria-expanded', document.body.classList.contains('menu-open')); el.pageStatus.textContent = state.pages.length ? `Page ${state.current + 1} / ${state.pages.length}` : 'Page 0 / 0'; el.zoomStatus.textContent = `${Math.round(state.zoom*100)}%`; }
-function setStatus(){ el.pageStatus.textContent = state.pages.length ? `Page ${state.current + 1} / ${state.pages.length}` : 'Page 0 / 0'; el.zoomStatus.textContent = `${Math.round(state.zoom*100)}%`; }
 function savePage(){ if (state.current < 0 || state.suppress) return; page().json = JSON.stringify(fabricCanvas.toDatalessJSON(['kind','latex'])); }
 function snapshot(){ if (state.current < 0 || state.suppress) return; savePage(); const id = page().id; state.history[id] ||= []; state.redo[id] = []; state.history[id].push(page().json); if (state.history[id].length > 80) state.history[id].shift(); renderThumb(state.current); }
 function restoreJson(json){ state.suppress = true; fabricCanvas.clear(); fabricCanvas.loadFromJSON(json || '{}', () => { fabricCanvas.renderAll(); state.suppress = false; }); }
